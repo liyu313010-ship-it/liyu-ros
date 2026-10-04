@@ -1,0 +1,208 @@
+# 2026 RAICOM CAIR 魔力元宝服务组国赛参数
+# 比赛开始后禁止修改参数；请在准备阶段完成现场标定和自检。
+
+yolo_model_path: /home/bobac3/siyuu/best.pt
+fallback_yolo_model_path: /home/bobac3/siyuu/best.pt
+# 食材、手机、书包统一使用机器人最上方的头部摄像头。
+# 底盘 /base_camera/image_raw 仍由AR回充模块独立使用，互不影响。
+camera_topic: /head_camera/image_raw
+
+# auto：自动寻找完整16类国赛模型；没有模型时仅食品/物品使用虚拟结果。
+# real：必须使用真实模型，模型不存在或类别不完整时启动失败。
+# mock：始终使用虚拟食品/物品结果。
+vision_mode: real
+
+# 人员检测、自动回充保持真实逻辑；仅在专项联调时临时改为 true。
+mock_person_detection: false
+skip_auto_charge_for_test: false
+
+# 当模型内的类别名称无法识别时，按以下训练类别编号顺序兜底映射。
+model_class_order:
+  - apple
+  - fish
+  - tofu
+  - green_pepper
+  - egg
+  - eggplant
+  - shrimp
+  - pork
+  - shanghai_green
+  - corn
+  - tomato
+  - potato
+  - cucumber
+  - banana
+  - phone
+  - backpack
+
+# false：准备阶段运行程序但机器人保持在出发区，裁判开始后说“开始比赛”
+# 或调用：rosservice call /service_robot/start_competition
+auto_start: false
+
+hold_seconds: 5.5
+navigation_timeout: 240.0
+# move_base 返回成功后也连续复核实际位姿；计分定位框中心误差控制在5cm。
+arrival_confirm_tolerance: 0.05
+arrival_confirm_samples: 3
+# 安全中转点不属于计分框，只要求经过，不使用5cm的计分点门槛。
+route_arrival_confirm_tolerance: 0.15
+# move_base 在墙边最后优化返回ABORTED时，只允许8cm内进行物理兜底。
+arrival_fallback_tolerance: 0.08
+arrival_fallback_yaw_tolerance: 0.20
+mission_timeout: 1200.0
+detect_seconds: 4.0
+detect_min_hits: 3
+detect_confidence: 0.35
+# 只用于手机/书包；0.50兼顾模型召回率，并配合至少两张新帧连续命中过滤误报。
+# 食材仍使用上面的0.35，不受影响。
+find_target_confidence: 0.50
+# 寻物使用两批独立新画面；只有第二批达到门槛才允许播报“找到”。
+# 两轮均使用0.50，避免厨房食材被低门槛误判为书包。
+find_verify_confidence: 0.50
+find_verify_min_hits: 3
+find_verify_seconds: 4.0
+find_camera_settle_seconds: 0.8
+
+# 食材识别固定流程：前三轮全图；不足三类时第四轮ROI；再不足才调用千问。
+# 每轮只统计相机新帧，所有轮次累计类别证据，整个食材识别最多75秒。
+food_global_rounds: 3
+food_round_seconds: 4.0
+# 全图阶段以960输入识别小目标；每轮低命中候选不丢弃，三轮累计满3帧才确认。
+food_global_confidence: 0.30
+food_global_min_hits: 3
+food_global_imgsz: 960
+food_recognition_timeout: 75.0
+food_retry_confidence: 0.30
+food_retry_min_hits: 2
+
+# ROI比例稍后用实机截图标定。四项保持-1时，第4轮自动退化为全图，不会报错。
+# 格式：左上角(x_min,y_min)，右下角(x_max,y_max)，范围均为0~1。
+food_roi_x_min_ratio: 0.25
+food_roi_y_min_ratio: 0.36
+food_roi_x_max_ratio: 0.86
+food_roi_y_max_ratio: 0.92
+
+# 千问百炼视觉兜底。Key和地域端点稍后填写；为空时自动跳过并继续本地YOLO。
+qwen_vision_enabled: true
+qwen_api_key: "sk-ws-H.EEMXLEI.Kuc6.MEUCIEdNprlRFMZ9p6xcFXYNm2EL68H1zCgZ3VIA3hdsfcMUAiEA8O51wrsLcDGxzzom91-bK6TOepNeT0d4agWAhMqtJtM"
+qwen_api_url: "https://llm-uijcfzj5dogfzyxc.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
+qwen_vision_model: "qwen3.8-max"
+qwen_timeout: 8.0
+qwen_min_evidence: 2
+
+# 联网智能播报。比赛临时密钥已内置于service_main.py，无需启动时输入。
+deepseek_api_url: https://api.deepseek.com/chat/completions
+deepseek_model: deepseek-v4-flash
+deepseek_timeout: 12.0
+deepseek_max_tokens: 220
+# 菜谱联网单次最多等待6秒；成功结果自动写入缓存，断网时优先复用。
+recipe_network_timeout: 6.0
+recipe_cache_path: /home/bobac3/siyuu/src/service_robot/config/recipe_cache.json
+
+# 天气定位优先级：非零经纬度 > 城市名 > 公网IP自动定位。
+# 默认保持以下三项不变，即可自动获取当前位置和实时天气，无需手动填写。
+weather_location_name: ""
+weather_latitude: 0.0
+weather_longitude: 0.0
+weather_use_ip_location: true
+weather_timeout: 6.0
+
+# 禁行区使用 map 坐标。实际虚拟墙缩为图中红色L形中心线：
+# 竖线 x=-1.91，横线 y=-1.86。
+# 软件电子围栏保留约0.05m宽的窄L形区域，避免零面积多边形失效。
+geofence_margin: 0.0
+forbidden_zones:
+  - name: corridor_forbidden
+    polygon:
+      - [-1.935, -1.45]
+      - [-1.885, -1.45]
+      - [-1.885, -1.835]
+      - [-0.85,  -1.835]
+      - [-0.85,  -1.885]
+      - [-1.935, -1.885]
+
+# 国赛沿用省赛地图原点和定位框位置，继续使用原七个导航点。
+points:
+  corridor: [-1.2471, -2.2794, -1.4922]
+  restaurant: [-2.2801, -1.1501, 3.0699]
+  kitchen: [-1.2636, -1.1576, -1.5933]
+  livingroom: [-1.2529, -0.0868, 1.5591]
+  bedroom: [-2.2408, -0.0720, 1.4127]
+  start: [-0.0914, -0.1117, 0.0199]
+  charge: [-0.3600, 0.0040, -0.0260]
+  # 通用安全中转点：A为右侧红框，B为左侧红框。
+  # 同一物理位置按行驶方向使用不同yaw，避免在中转点无意义原地大转圈。
+  # start -> corridor：A -> corridor
+  route_a_out: [-0.1751, -2.2659, -3.1147]
+  route_b_out: [-2.3981, -2.3256, 1.5085]
+  # task1/2 -> start：restaurant -> B -> A -> start
+  route_b_back: [-2.3981, -2.3256, 0.0268]
+  route_a_back: [-0.1751, -2.2659, 1.5320]
+
+# 中转点只约束路径，不执行5.5秒停留，也不播报。
+
+# ① 开始比赛 / 任务1、2从出发区回走廊：
+# start -> A -> corridor
+start_to_corridor_waypoints:
+  - route_a_out
+
+# ② 在走廊收到需要移动的任务命令后：
+# corridor -> B -> 任务区域
+corridor_to_task_waypoints:
+  - route_b_out
+
+# ④ 最后一项任务结束：
+# 任务3结束：任务区域 -> restaurant -> 原B -> corridor
+task_to_corridor_waypoints:
+  - restaurant
+  - route_b_back
+
+# ③ 任务1、2结束：
+# 任务1、2结束：任务区域 -> restaurant -> 原B -> 原A -> start
+task_to_start_waypoints:
+  - restaurant
+  - route_b_back
+  - route_a_back
+
+# 最后一项任务完成后：
+# 任务位置 -> restaurant -> 原B -> corridor
+# -> 播报“所有任务都完成了，我要回去充电了”
+# -> A(右侧红框) -> charge。
+# 注意：此流程不进入start出发区。
+corridor_to_charge_waypoints:
+  - route_a_back
+
+# 回充：有电时真实充电信号优先；比赛无电时使用“AR对准 + Odom最终定距”。
+allow_charge_fallback: true
+charge_signal_confirm_seconds: 2.0
+charge_timeout: 35.0
+
+# ---------------- 最终无电回充参数 ----------------
+# AR只负责把机器人送到最终直线段。
+# 实测 x≈-0.343 时距离充电桩约7~8cm，因此从约 -0.34 开始切换到Odom定距。
+final_dock_trigger_x: -0.34
+
+# 进入最终Odom直线段前，AR横向误差必须不超过5cm。
+final_dock_align_y: 0.05
+
+# ★ 最重要的现场标定参数：
+# 进入最终直线段后再倒车多少米。
+# 当前按实测“还差7~8cm”设置为7.5cm。
+final_dock_distance: 0.150
+
+# 最终直线段倒车速度，代码会自动取负号。
+final_dock_speed: 0.012
+
+# 最终段绝对保险时间；无论AR/Odom发生什么，达到该时间都会强制停车。
+final_dock_timeout: 14.0
+
+# 最终定距使用的里程计话题。
+final_dock_odom_topic: /odom
+
+# 回充视觉调试：
+# AR回充模块使用底盘 /base_camera/image_raw。
+# 到达charge并开始视觉对接时，自动弹出该topic的实时画面，方便确认摄像头是否选对。
+# 这里只负责“显示”，不会改变AR模块本身的相机配置。
+charge_camera_viewer_enabled: true
+charge_camera_topic: /base_camera/image_raw
+

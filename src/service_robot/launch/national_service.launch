@@ -1,0 +1,12 @@
+<launch>
+  <rosparam command="load"
+            file="$(find service_robot)/config/national_service.yaml"
+            ns="service_robot" />
+
+  <node pkg="service_robot"
+        type="service_main.py"
+        name="service_robot"
+        output="screen"
+        respawn="false" />
+</launch>
+
