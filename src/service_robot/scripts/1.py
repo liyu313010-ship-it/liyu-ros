@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """2026 RAICOM 魔力元宝服务组主控程序。
@@ -70,7 +70,7 @@ AREA_INTRO = {
     "bedroom": "这里是卧室，是休息和睡眠的区域。",
 }
 
-YOLO_MODEL_PATH = "/home/bobac3/siyuu/best.pt"
+YOLO_MODEL_PATH = "/home/bobac3/liyu/best.pt"
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 DEEPSEEK_MODEL = "deepseek-v4-flash"
 DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"

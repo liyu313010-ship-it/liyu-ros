@@ -1,4 +1,4 @@
-# siyuu - ROS 工作空间
+﻿# liyu - ROS 工作空间
 
 基于 ROS catkin 的机器人工作空间，包含目标检测模型与导航相关脚本。
 
@@ -17,7 +17,7 @@
 ## 构建
 
 ```bash
-cd ~/catkin_ws
+cd ~/liyu
 catkin_make
 source devel/setup.bash
 ```

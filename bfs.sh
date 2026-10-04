@@ -1,8 +1,8 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 set -u
 
-SERVICE_WS="${SERVICE_WS:-$HOME/siyuu}"
+SERVICE_WS="${SERVICE_WS:-$HOME/liyu}"
 BASE_WS="${BASE_WS:-$HOME/bobac3_ws}"
 MAP_DIRECTORY="${MAP_DIRECTORY:-/home/bobac3/.reinovo/maps}"
 MAP_NAME="${MAP_NAME:-D123map}"

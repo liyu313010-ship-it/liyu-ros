@@ -1,8 +1,8 @@
-# 2026 RAICOM CAIR 魔力元宝服务组国赛参数
+﻿# 2026 RAICOM CAIR 魔力元宝服务组国赛参数
 # 比赛开始后禁止修改参数；请在准备阶段完成现场标定和自检。
 
-yolo_model_path: /home/bobac3/siyuu/best.pt
-fallback_yolo_model_path: /home/bobac3/siyuu/best.pt
+yolo_model_path: /home/bobac3/liyu/best.pt
+fallback_yolo_model_path: /home/bobac3/liyu/best.pt
 # 食材、手机、书包统一使用机器人最上方的头部摄像头。
 # 底盘 /base_camera/image_raw 仍由AR回充模块独立使用，互不影响。
 camera_topic: /head_camera/image_raw
@@ -97,7 +97,7 @@ deepseek_timeout: 12.0
 deepseek_max_tokens: 220
 # 菜谱联网单次最多等待6秒；成功结果自动写入缓存，断网时优先复用。
 recipe_network_timeout: 6.0
-recipe_cache_path: /home/bobac3/siyuu/src/service_robot/config/recipe_cache.json
+recipe_cache_path: /home/bobac3/liyu/src/service_robot/config/recipe_cache.json
 
 # 天气定位优先级：非零经纬度 > 城市名 > 公网IP自动定位。
 # 默认保持以下三项不变，即可自动获取当前位置和实时天气，无需手动填写。

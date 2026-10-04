@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """2026 RAICOM CAIR 魔力元宝服务组国赛主控程序。"""
@@ -638,10 +638,10 @@ class ServiceRobot:
         if YOLO is None:
             raise RuntimeError("未安装ultralytics，无法加载YOLO模型")
         configured = rospy.get_param(
-            "~yolo_model_path", "/home/bobac3/siyuu/best_national.pt"
+            "~yolo_model_path", "/home/bobac3/liyu/best_national.pt"
         )
         fallback = rospy.get_param(
-            "~fallback_yolo_model_path", "/home/bobac3/siyuu/best.pt"
+            "~fallback_yolo_model_path", "/home/bobac3/liyu/best.pt"
         )
         candidates = []
         for path in (configured, fallback):
